@@ -23,7 +23,7 @@ import traci
 
 # use vehicle generation protocols to generate vehicle list
 def get_controlled_vehicles(route_filename, connection_info, \
-    num_controlled_vehicles=10, num_uncontrolled_vehicles=20, pattern = 1):
+    num_controlled_vehicles=10, num_uncontrolled_vehicles=20, pattern = 3):
     '''
     :param @route_filename <str>: the name of the route file to generate
     :param @connection_info <object>: an object that includes the map inforamtion
@@ -61,7 +61,7 @@ def run_simulation(scheduler, vehicles):
 
     traci.start([sumo_binary, "-c", "./configurations/myconfig.sumocfg", \
                  "--tripinfo-output", "./configurations/trips.trips.xml", \
-                 "--fcd-output", "./configurations/testTrace.xml"])
+                 "--fcd-output", "./configurations/testTrace.xml","--quit-on-end"])
 
     total_time, end_number, deadlines_missed = simulation.run()
     print("Average timespan: {}, total vehicle number: {}".format(str(total_time/end_number),\

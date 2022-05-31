@@ -382,20 +382,22 @@ class target_vehicles_generator:
         density =  latest_release_time / float(num_random_vehicles)
         density = int(density * 100)/100.0
         #copy the file randomTrips.py to the current directory
-        command_str = "cp $SUMO_HOME/tools/randomTrips.py ./"
-        if os.system(command_str) != 0:
-            print("ERROR: Failed to copy randomTrips.py to current directory.")
-            return None
+        # command_str = "cp $SUMO_HOME/tools/randomTrips.py ./"
+        # if os.system(command_str) != 0:
+        #     print("ERROR: Failed to copy randomTrips.py to current directory.")
+        #     return None
         #invoke randomTrips.py
-        command_str = "./randomTrips.py -n "+net_xml_file+" -e 50 -p "+str(density) +" -r "+target_xml_file
+        print("net_xml_file:",net_xml_file)
+        print("what's our target",target_xml_file)
+        command_str = "python randomTrips.py -n "+net_xml_file+" -e 50 -p "+str(density) +" -r "+target_xml_file
         if os.system(command_str) != 0:
             print("ERROR: Failed to invoke randomTrips.py.")
             return None
         #delete randomTrips.py
-        command_str = "rm ./randomTrips.py"
-        if os.system(command_str) != 0:
-            print("ERROR: Failed to remove randomTrips.py.")
-            return None
+        # command_str = "rm ./randomTrips.py"
+        # if os.system(command_str) != 0:
+        #     print("ERROR: Failed to remove randomTrips.py.")
+        #     return None
         #insert the generated vehicles into the xml file
         #use id to find the vehicles and modify their information directly
         result_dict = None
@@ -419,14 +421,22 @@ class target_vehicles_generator:
                 #print("DEBUG: pattern 2 regenerating.")
             result_dict = self.generate_target_vehicles(num_target_vehicles, target_xml_file, (param_start, param_dest) )
         elif pattern==3:
-            param_start = __random_choices_with_rp__(self.edge_list, num_target_vehicles*2)
-            param_dest = __random_choices_with_rp__(self.edge_list, num_target_vehicles*2)
-            #at least one group of start points and one destination is valid towards each other
-            while not validate_path_starts_ends(self.net, param_start, param_dest):
-                param_start = __random_choices_with_rp__(self.edge_list, num_target_vehicles*2)
-                param_dest = __random_choices_with_rp__(self.edge_list, num_target_vehicles*2)
-                ### UNCOMMENT TO DEBUG ###
-                #print("DEBUG: pattern 3 regenerating.")
+            param_start = []
+            param_dest = []
+            x = 0
+            while x < num_target_vehicles:
+                #while False:
+                param_start_temp = random.choice(self.edge_list)
+                param_dest_temp = random.choice(self.edge_list)
+                #print(param_start_temp)
+                if param_dest_temp == param_start_temp:
+                    continue
+                if self.net.getShortestPath(param_start_temp,param_dest_temp) == None:
+                    continue
+                else:
+                    param_start.append(param_start_temp)
+                    param_dest.append(param_dest_temp)
+                    x+=1
             result_dict = self.generate_target_vehicles(num_target_vehicles, target_xml_file, (param_start, param_dest) )
         else:
             print("ERROR: Unknown pattern type.")
