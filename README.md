@@ -13,7 +13,7 @@ The goal of the routing policy, i.e., the metrics used, includes:
 It is recommended to use Python 3.x, the packages required are included in requirements.txt. 
 You can use pip to install them directly (for Python 3.x):
 ```
-pip3 install requirements.txt
+pip3 install -r requirements.txt
 ```
 You also need to install SUMO properly: https://sumo.dlr.de/docs/Installing/index.html
 
